@@ -15,7 +15,7 @@ app.set('views', './views');
 app.use(express.static('public'));
 
 app.use('/', homeRoutes);
-app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/users/', userRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
