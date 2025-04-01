@@ -13,6 +13,6 @@ router.put('/:id', userController.updateUser);
 
 router.delete('/:id', userController.deleteUser);
 
-router.post('/verify/:id', userController.verifyUser);
+router.post('/:id/verify', userController.verifyUser);
 
 module.exports = router;
