@@ -97,8 +97,85 @@ const createUser = (req, res) => {
   });
 };
 
+const updateUser = (req, res) => {
+  const { id } = req.params;
+  const { first_name, last_name, email, isVerified } = req.body;
+
+  const index = users.findIndex((user) => user.id === id);
+  if (index === undefined) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      statusCode: httpStatus.NOT_FOUND,
+      message: 'Không tìm thấy người dùng',
+    });
+  }
+
+  users[index] = {
+    ...users[index],
+    first_name,
+    last_name,
+    email,
+    isVerified,
+  };
+
+  res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
+    message: 'Cập nhật thông tin người dùng thành công',
+    data: users[index],
+  });
+};
+
+const deleteUser = (req, res) => {
+  const { id } = req.params;
+  const index = users.findIndex((user) => user.id === id);
+
+  if (index === -1) {
+    return res.status(httpStatus.NOT_FOUND).json({ error:
+      'Không tìm thấy người dùng' });
+      
+  }
+  users.splice(index, 1);
+
+  res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
+    message: 'Xóa người dùng thành công',
+  });
+};
+
+const verifyUser = (req, res) => {
+  const { id } = req.params;
+  const user = users.find((user) => user.id === id);
+  if (!user) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      statusCode: httpStatus.NOT_FOUND,
+      message: 'Không tìm thấy người dùng',
+    });
+  }
+
+  if (user.isVerified === true) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      statusCode: httpStatus.BAD_REQUEST,
+      message: 'Người dùng đã đã xác nhận',
+    });
+  } else {
+    return res.status(httpStatus.OK).json({
+      statusCode: httpStatus.OK,
+      message: 'Xác nhận người dùng thành công',
+      data: {
+        id,
+        first_name,
+        last_name,
+        email,
+        isVerified: true,
+      },
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
+  updateUser,
+  deleteUser,
+  verifyUser,
 };
