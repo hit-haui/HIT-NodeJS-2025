@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const httpStatus = require('http-status-codes');
+const { checkout } = require('../routes/home.route');
 
 const users = [
   {
@@ -95,10 +96,116 @@ const createUser = (req, res) => {
       user,
     },
   });
+
 };
+
+const updateUser = (req, res) => {
+  const { id } = req.params;
+  const { first_name, last_name, email } = req.body;
+  const userIndex = users.findIndex((user) => user.id === id);
+
+  // Kiểm tra người dùng tồn tại
+  if (userIndex === -1) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      statusCode: httpStatus.NOT_FOUND,
+      message: "Không tìm thấy người dùng",
+    })
+  }
+
+  // Kiểm tra email trùng (nếu có email mới)
+  if (email) {
+    let checkEmail = false;
+    for (let j = 0; j < users.length; ++j) {
+      if (email === users[j].email && id !== users[j].id) { 
+        checkEmail = true;
+        break;
+      }
+    }
+
+    if (checkEmail) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        statusCode: httpStatus.BAD_REQUEST,
+        message: "Email đã tồn tại",
+      })
+    }
+  }
+
+  // Cập nhật thông tin
+  const userToUpdate = users[userIndex];
+  userToUpdate.first_name = first_name || userToUpdate.first_name;
+  userToUpdate.last_name = last_name || userToUpdate.last_name;
+  userToUpdate.email = email || userToUpdate.email;
+
+  // Phản hồi
+  return res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
+    message: "Cập nhật thành công",
+    data: {
+      user: userToUpdate,
+    },
+  });
+}
+
+const deleteUser = (req, res)=>{
+  const { id } = req.params;
+  const userIndex = users.findIndex((user) => user.id === id)
+
+  if(userIndex === -1){
+    return res.status(httpStatus.NOT_FOUND).json({
+      statusCode: httpStatus.NOT_FOUND,
+      message: 'khong tim thay nguoi dung nay'
+    })
+  }
+
+  users.splice(userIndex,1)
+
+  res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
+    message: 'Da xoa nguoi dung nay'
+  })
+}
+
+const verifyUser =(req, res)=>{
+  const {id} = req.params
+  const userIndex = users.findIndex((user) => user.id ===id)
+  console.log(userIndex)
+  //kiem tra nguoi dung co ton tai hay khong
+  if(userIndex == -1){
+    return res.status(httpStatus.NOT_FOUND).json({
+      statusCode: httpStatus.OK,
+      message: 'khong tim thay nguoi dung nay'
+    })
+  }
+  const user = users[userIndex];
+  console.log(user.isVerified)
+
+  //kiem tra xem nguoi dung da xac thuc chua
+  if (user.isVerified === true){
+    return res.status(httpStatus.BAD_REQUEST).json({
+      statusCode: httpStatus.BAD_REQUEST,
+      message: 'nguoi dung da xac minh'
+    })
+  }
+
+  user.isVerified = true
+
+  users[userIndex] = user,
+
+  res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
+    message: 'Xac  thuc thanh cong',
+    data: {
+      user
+    }
+  })
+
+}
 
 module.exports = {
   getUsers,
   getUserById,
   createUser,
+  updateUser,
+  deleteUser,
+  verifyUser
 };
