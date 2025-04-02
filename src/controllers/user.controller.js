@@ -106,7 +106,7 @@ const updateUser = (req, res) => {
   if (userIndex === -1) {
     return res.status(httpStatus.NOT_FOUND).json({
       statusCode: httpStatus.NOT_FOUND,
-      message: 'Không tìm thấy người dùng có id là {id}!',
+      message: 'Không tìm thấy người dùng có id là ${id}!',
     });
   }
 
@@ -144,15 +144,15 @@ const deleteUser = (req, res) => {
   if (userIndex === -1) {
     return res.status(httpStatus.NOT_FOUND).json({
       statusCode: httpStatus.NOT_FOUND,
-      message: 'Không tìm thấy người dùng có id là {id}!',
+      message: 'Không tìm thấy người dùng có id là ${id}!',
     });
   }
 
   //Xóa người dùng
   users.splice(userIndex, 1);
 
-  res.status(httpStatus.NO_CONTENT).json({
-    statusCode: httpStatus.NO_CONTENT,
+  res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
     message: 'Xóa người dùng thành công!',
   });
 };
@@ -164,7 +164,7 @@ const verifyUser = (req, res) => {
   if (!user) {
     return res.status(httpStatus.NOT_FOUND).json({
       statusCode: httpStatus.NOT_FOUND,
-      message: 'Không tìm thấy người dùng có id là {id}!',
+      message: 'Không tìm thấy người dùng có id là ${id}!',
     });
   }
 
