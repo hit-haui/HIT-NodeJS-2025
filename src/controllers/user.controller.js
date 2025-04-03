@@ -1,174 +1,101 @@
-const { v4: uuidv4 } = require('uuid');
 const httpStatus = require('http-status-codes');
 
-const users = [
-  {
-    id: 'eea8d8db-6040-46c4-9329-349bbb5d52e9',
-    first_name: 'Andris',
-    last_name: 'Capelen',
-    email: 'acapelen0@cornell.edu',
-    isVerified: true,
-  },
-  {
-    id: 'b888cf0f-b662-4651-8c73-975a6fc4f0a8',
-    first_name: 'Jeffy',
-    last_name: 'Barthropp',
-    email: 'jbarthropp1@howstuffworks.com',
-    isVerified: true,
-  },
-  {
-    id: 'f4e1e075-e347-4d43-952d-887d20bd1ea5',
-    first_name: 'Dana',
-    last_name: 'Yegorkov',
-    email: 'dyegorkov2@plala.or.jp',
-    isVerified: false,
-  },
-  {
-    id: '3878f6b6-d792-4080-a7df-736ad11784e5',
-    first_name: 'Noak',
-    last_name: 'Croot',
-    email: 'ncroot3@ca.gov',
-    isVerified: true,
-  },
-  {
-    id: '1d04ca3e-ce16-4e2a-bf59-4e1e6869dd3d',
-    first_name: 'Joannes',
-    last_name: 'Castelletti',
-    email: 'jcastelletti4@123-reg.co.uk',
-    isVerified: false,
-  },
-];
+const User = require('../models/user.model');
 
-const getUsers = (req, res) => {
-  res.status(httpStatus.OK).json({
-    statusCode: httpStatus.OK,
-    message: 'Lấy danh sách người dùng thành công',
-    data: {
-      users,
-    },
-  });
-};
+const createUser = async (req, res) => {
+  try {
+    const { fullname, email, password } = req.body;
 
-const getUserById = (req, res) => {
-  const { id } = req.params;
-  const user = users.find((user) => user.id === id);
+    if (!fullname || !email || !password) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        statusCode: httpStatus.BAD_REQUEST,
+        message: 'Vui lòng điền đủ thông tin.',
+        data: {},
+      });
+    }
 
-  if (!user) {
-    return res.status(httpStatus.NOT_FOUND).json({
-      statusCode: httpStatus.NOT_FOUND,
-      message: 'Không tìm thấy người dùng',
+    const isExist = await User.findOne({ email });
+
+    if (isExist) {
+      return res.status(httpStatus.CONFLICT).json({
+        statusCode: httpStatus.CONFLICT,
+        message: 'Người dùng đã tồn tại',
+        data: {},
+      });
+    }
+
+    const user = await User.create(req.body);
+    res.status(httpStatus.CREATED).json({
+      statusCode: httpStatus.CREATED,
+      message: 'Tạo người dùng thành công.',
+      data: {
+        user,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Đã xảy ra lỗi.',
+      data: {},
     });
   }
-
-  res.status(httpStatus.OK).json({
-    statusCode: httpStatus.OK,
-    message: 'Lấy thông tin người dùng thành công',
-    data: {
-      user,
-    },
-  });
 };
 
-const createUser = (req, res) => {
-  const { first_name, last_name, email } = req.body;
-
-  if (users.find((user) => user.email === email)) {
-    return res.status(httpStatus.BAD_REQUEST).json({
-      statusCode: httpStatus.BAD_REQUEST,
-      message: 'Email đã tồn tại',
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(httpStatus.OK).json({
+      statusCode: httpStatus.OK,
+      message: 'Lấy danh sách người dùng thành công.',
+      data: {
+        users,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Đã xảy ra lỗi.',
+      data: {},
     });
   }
-
-  const user = {
-    id: uuidv4(),
-    first_name,
-    last_name,
-    email,
-    isVerified: false,
-  };
-  users.push(user);
-
-  res.status(httpStatus.CREATED).json({
-    statusCode: httpStatus.CREATED,
-    message: 'Tạo người dùng thành công',
-    data: {
-      user,
-    },
-  });
 };
 
-const updateUser = (req, res) => {
-  const { id } = req.params;
-  const { first_name, last_name, email } = req.body;
+const updateUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        statusCode: httpStatus.NOT_FOUND,
+        message: 'Người dùng không tồn tại.',
+        data: {},
+      });
+    }
 
-  const userIndex = users.findIndex((user) => user.id === id);
+    Object.assign(user, req.body);
 
-  if (userIndex === -1) {
-    return res.status(httpStatus.NOT_FOUND).json({
-      statusCode: httpStatus.NOT_FOUND,
-      message: 'Không tìm thấy người dùng',
+    await user.save();
+
+    res.status(httpStatus.OK).json({
+      statusCode: httpStatus.OK,
+      message: 'Cập nhật người dùng thành công.',
+      data: {
+        user,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Đã xảy ra lỗi.',
+      data: {},
     });
   }
-
-  users[userIndex] = {
-    ...users[userIndex],
-    first_name,
-    last_name,
-    email,
-  };
-
-  res.status(httpStatus.OK).json({
-    statusCode: httpStatus.OK,
-    message: 'Cập nhật người dùng thành công',
-    data: {
-      user: users[userIndex],
-    },
-  });
-};
-
-const deleteUser = (req, res) => {
-  const { id } = req.params;
-  const userIndex = users.findIndex((user) => user.id === id);
-
-  if (userIndex === -1) {
-    return res.status(httpStatus.NOT_FOUND).json({
-      statusCode: httpStatus.NOT_FOUND,
-      message: 'Không tìm thấy người dùng',
-    });
-  }
-
-  users.splice(userIndex, 1);
-
-  res.status(httpStatus.OK).json({
-    statusCode: httpStatus.OK,
-    message: 'Xóa người dùng thành công',
-  });
-};
-
-const verifyUser = (req, res) => {
-  const { id } = req.params;
-  const userIndex = users.findIndex((user) => user.id === id);
-
-  if (userIndex === -1) {
-    return res.status(httpStatus.NOT_FOUND).json({
-      statusCode: httpStatus.NOT_FOUND,
-      message: 'Không tìm thấy người dùng',
-    });
-  }
-
-  users[userIndex].isVerified = true;
-
-  res.status(httpStatus.OK).json({
-    statusCode: httpStatus.OK,
-    message: 'Xác thực người dùng thành công',
-    data: {
-      user: users[userIndex],
-    },
-  });
 };
 
 module.exports = {
-  getUsers,
-  getUserById,
   createUser,
+  getUsers,
+  updateUser,
 };
