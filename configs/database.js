@@ -4,9 +4,9 @@ class Database {
   constructor() {
     this.connect();
   }
-  connect() {
+  async connect() {
     try {
-      mongoose.connect(process.env.DATABASE);
+      await mongoose.connect(process.env.DATABASE);
       console.log('DB connection successful !');
     } catch (error) {
       console.log('DB connection failed !', error);
