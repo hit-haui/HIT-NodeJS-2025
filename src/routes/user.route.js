@@ -13,4 +13,6 @@ router.get('/:id', userController.getUserById);
 
 router.delete('/:id', userController.deleteUserById);
 
+router.search('/search?name=', userController.searchUserByName);
+
 module.exports = router;
