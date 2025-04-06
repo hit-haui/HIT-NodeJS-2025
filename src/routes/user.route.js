@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const userController = require('../controllers/user.controller');
-
+router.get('/search', userController.searchUser);
 router.get('/', userController.getUsers);
 
 router.get('/:id', userController.getUserById);
@@ -13,6 +13,8 @@ router.put('/:id', userController.updateUser);
 
 router.delete('/:id', userController.deleteUser);
 
-router.patch('/:id/verify', userController.verifyUser);
+
+
+// router.patch('/:id/verify', userController.verifyUser);
 
 module.exports = router;
