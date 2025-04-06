@@ -108,32 +108,51 @@ const getUserById = async (req, res) => {
 //UPDATE USER BY ID
 const updateUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
+    const { id } = req.params;
+    const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
+
+    if (!updatedUser) {
       return res.status(httpStatus.NOT_FOUND).json({
         statusCode: httpStatus.NOT_FOUND,
-        message: 'Người dùng không tồn tại.',
-        data: {},
+        message: 'Không tìm thấy người dùng!',
       });
     }
 
-    Object.assign(user, req.body);
+    res.status(httpStatus.OK).json({
+      statusCode: httpStatus.OK,
+      message: 'Cập nhật người dùng thành công!',
+      data: { user: hidePasswordUser(updatedUser) },
+    });
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Cập nhật người dùng thất bại!',
+    });
+  }
+};
 
-    await user.save();
+// DELETE USER BY ID
+const deleteUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        statusCode: httpStatus.NOT_FOUND,
+        message: 'Không tìm thấy người dùng!',
+      });
+    }
 
     res.status(httpStatus.OK).json({
       statusCode: httpStatus.OK,
-      message: 'Cập nhật người dùng thành công.',
-      data: {
-        user,
-      },
+      message: 'Xóa người dùng thành công!',
     });
   } catch (err) {
-    console.log(err);
-    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+    console.error('Lỗi:', err);
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-      message: 'Đã xảy ra lỗi.',
-      data: {},
+      message: 'Xóa người dùng thất bại!',
     });
   }
 };
@@ -143,4 +162,5 @@ module.exports = {
   getUsers,
   updateUser,
   getUserById,
+  deleteUserById,
 };
