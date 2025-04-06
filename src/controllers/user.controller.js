@@ -157,10 +157,40 @@ const deleteUserById = async (req, res) => {
   }
 };
 
+// SEARCH USER BY NAME
+const searchUserByName = async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (!name) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        statusCode: httpStatus.BAD_REQUEST,
+        message: 'Thiếu tham số tên để tìm kiếm!',
+      });
+    }
+
+    const users = await User.find({
+      fullname: { $regex: name, $options: 'i' },
+    });
+
+    res.status(httpStatus.OK).json({
+      statusCode: httpStatus.OK,
+      message: 'Tìm kiếm người dùng thành công!',
+      data: { users: users.map(hidePasswordUser) },
+    });
+  } catch (err) {
+    console.error('Lỗi:', err);
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Lỗi máy chủ khi tìm kiếm người dùng!',
+    });
+  }
+};
+
 module.exports = {
   createUser,
   getUsers,
   updateUser,
   getUserById,
   deleteUserById,
+  searchUserByName,
 };
