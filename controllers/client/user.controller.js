@@ -1,6 +1,7 @@
 const httpStatus = require('http-status-codes');
 const User = require('../../models/user.model');
 const bcrypt = require('bcryptjs');
+
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
@@ -17,7 +18,6 @@ const getUsers = async (req, res) => {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Đã xảy ra lỗi',
-      data: {},
     });
   }
 };
@@ -26,11 +26,9 @@ const createUser = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
     if (!fullName || !email || !password) {
-      console.log(fullName, email, password);
       res.status(httpStatus.BAD_REQUEST).json({
         statusCode: httpStatus.BAD_REQUEST,
         message: 'Vui lòng nhập đủ các trường',
-        data: {},
       });
       return;
     }
@@ -40,7 +38,6 @@ const createUser = async (req, res) => {
       res.status(httpStatus.CONFLICT).json({
         statusCode: httpStatus.CONFLICT,
         message: 'Email đã tồn tại',
-        data: {},
       });
       return;
     }
@@ -64,7 +61,6 @@ const createUser = async (req, res) => {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Đã xảy ra lỗi',
-      data: {},
     });
   }
 };
@@ -81,7 +77,6 @@ const updateUser = async (req, res) => {
       return res.status(httpStatus.NOT_FOUND).json({
         statusCode: httpStatus.NOT_FOUND,
         message: 'Người dùng không tồn tại',
-        data: {},
       });
     }
 
@@ -96,7 +91,6 @@ const updateUser = async (req, res) => {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Đã xảy ra lỗi',
-      data: {},
     });
   }
 };
@@ -104,16 +98,14 @@ const updateUser = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const id = req.params.id;
-
-    if (!id) {
+    const user = await User.findOne({ _id: id });
+    if (!user || !id) {
       return res.status(httpStatus.NOT_FOUND).json({
         statusCode: httpStatus.NOT_FOUND,
         message: 'Người dùng không tồn tại',
-        data: {},
       });
     }
 
-    const user = await User.findOne({ _id: id });
     res.status(httpStatus.OK).json({
       statusCode: httpStatus.OK,
       message: 'Lấy danh người dùng thành công',
@@ -125,7 +117,6 @@ const getUserById = async (req, res) => {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Đã xảy ra lỗi',
-      data: {},
     });
   }
 };
@@ -133,16 +124,14 @@ const getUserById = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const id = req.params.id;
-
-    if (!id) {
+    const user = await User.deleteOne({ _id: id });
+    if (!user || !id) {
       return res.status(httpStatus.NOT_FOUND).json({
         statusCode: httpStatus.NOT_FOUND,
         message: 'Người dùng không tồn tại',
-        data: {},
       });
     }
 
-    const user = await User.deleteOne({ _id: id });
     res.status(httpStatus.OK).json({
       statusCode: httpStatus.OK,
       message: 'Xoá người dùng thành công',
@@ -154,7 +143,6 @@ const deleteUser = async (req, res) => {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Đã xảy ra lỗi',
-      data: {},
     });
   }
 };
@@ -166,11 +154,10 @@ const searchUserByName = async (req, res) => {
       return res.status(httpStatus.BAD_REQUEST).json({
         statusCode: httpStatus.BAD_REQUEST,
         message: 'Tên tìm kiếm không được để trống',
-        data: {},
       });
     }
 
-    const user = await User.findOne({
+    const user = await User.find({
       fullName: { $regex: fullName, $options: 'i' },
     });
 
@@ -178,7 +165,6 @@ const searchUserByName = async (req, res) => {
       return res.status(httpStatus.NOT_FOUND).json({
         statusCode: httpStatus.NOT_FOUND,
         message: 'Không tìm thấy người dùng',
-        data: {},
       });
     }
 
@@ -191,7 +177,6 @@ const searchUserByName = async (req, res) => {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Đã xảy ra lỗi',
-      data: {},
     });
   }
 };
