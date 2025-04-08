@@ -20,3 +20,13 @@ app.use('/api/v1/users', userRoutes);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+const mongoose = require('mongoose');
+
+mongoose
+  .connect('mongodb://localhost:27017/Nelam', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((error) => console.error(error));

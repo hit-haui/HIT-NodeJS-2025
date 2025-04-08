@@ -1,0 +1,37 @@
+ [
+    {
+      "id": "eea8d8db-6040-46c4-9329-349bbb5d52e9",
+      "first_name": "Andris",
+      "last_name": "Capelen",
+      "email": "acapelen0@cornell.edu",
+      "isVerified": true
+    },
+    {
+      "id": "b888cf0f-b662-4651-8c73-975a6fc4f0a8",
+      "first_name": "Jeffy",
+      "last_name": "Barthropp",
+      "email": "jbarthropp1@howstuffworks.com",
+      "isVerified": true
+    },
+    {
+      "id": "f4e1e075-e347-4d43-952d-887d20bd1ea5",
+      "first_name": "Dana",
+      "last_name": "Yegorkov",
+      "email": "dyegorkov2@plala.or.jp",
+      "isVerified": false
+    },
+    {
+      "id": "3878f6b6-d792-4080-a7df-736ad11784e5",
+      "first_name": "Noak",
+      "last_name": "Croot",
+      "email": "ncroot3@ca.gov",
+      "isVerified": true
+    },
+    {
+      "id": "1d04ca3e-ce16-4e2a-bf59-4e1e6869dd3d",
+      "first_name": "Joannes",
+      "last_name": "Castelletti",
+      "email": "jcastelletti4@123-reg.co.uk",
+      "isVerified": false
+    }
+]
