@@ -108,11 +108,9 @@ const deleteUser = async (req, res) => {
 const searchUserByName = async (req, res) => {
   try {
     const { fullname } = req.query;
-    console.log(fullname);
     const nameaftertolower = fullname.toLowerCase();
     const user = await User.find({ fullname: nameaftertolower });
-
-    if (!user) {
+    if (user.length == 0) {
       return res.status(httpStatus.NOT_FOUND).json({
         statusCode: httpStatus.NOT_FOUND,
         message: 'Khong tim thay ten thanh nay',
@@ -122,9 +120,7 @@ const searchUserByName = async (req, res) => {
     res.status(httpStatus.NOT_FOUND).json({
       statusCode: httpStatus.NOT_FOUND,
       message: `Nhung nguoi ten ${fullname}`,
-      data: {
-        user,
-      },
+      data: { user },
     });
   } catch (error) {
     console.log(error);
