@@ -90,7 +90,7 @@ const updateUser = async (req, res) => {
     }
 
     //update người dùng
-    const user = await User.findByIdAndUpdate({ _id: id }, { fullname: 'Bùi Huy Hoàng' }, { new: true });
+    const user = await User.findByIdAndUpdate(id, req.body, { new: true });
 
     res.status(httpStatus.OK).json({
       statusCode: httpStatus.OK,
