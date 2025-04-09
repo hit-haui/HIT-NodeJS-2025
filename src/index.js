@@ -6,7 +6,7 @@ const httpStatus = require('http-status-codes');
 const connectDB = require('./config/db');
 const homeRoutes = require('./routes/home.route');
 const userRoutes = require('./routes/user.route');
-
+const errorHandler = require('./middlewares/error.middleware')
 const app = express();
 
 const port = process.env.PORT || 3000;
@@ -19,6 +19,13 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
+const logger = (req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+};
+
+app.use(logger); // Sử dụng middleware logger cho tất cả các route
+
 app.use('/', homeRoutes);
 app.use('/api/v1/users', userRoutes);
 
@@ -29,6 +36,8 @@ app.use('*', (req, res) => {
     data: {},
   });
 });
+
+app.use(errorHandler);
 
 connectDB()
   .then(() => {

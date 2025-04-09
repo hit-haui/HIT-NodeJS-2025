@@ -9,7 +9,7 @@ router.get('/', userController.getUsers);
 
 router.get('/search', userController.searchUserByName);
 
-router.get('/:id', userController.getUser);
+router.get('/:id', userController.getUsers);
 
 router.put('/:id', userController.updateUser);
 
