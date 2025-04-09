@@ -33,7 +33,6 @@ const createUser = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Đã xảy ra lỗi.',
@@ -53,7 +52,33 @@ const getUsers = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Đã xảy ra lỗi.',
+      data: {},
+    });
+  }
+};
+
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        statusCode: httpStatus.NOT_FOUND,
+        message: 'Người dùng không tồn tại.',
+        data: {},
+      });
+    }
+
+    res.status(httpStatus.OK).json({
+      statusCode: httpStatus.OK,
+      message: 'Lấy thông tin người dùng thành công.',
+      data: {
+        user,
+      },
+    });
+  } catch (err) {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Đã xảy ra lỗi.',
@@ -85,7 +110,53 @@ const updateUser = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Đã xảy ra lỗi.',
+      data: {},
+    });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        statusCode: httpStatus.NOT_FOUND,
+        message: 'Người dùng không tồn tại.',
+        data: {},
+      });
+    }
+
+    await user.remove();
+
+    res.status(httpStatus.OK).json({
+      statusCode: httpStatus.OK,
+      message: 'Xóa người dùng thành công.',
+      data: {},
+    });
+  } catch (err) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Đã xảy ra lỗi.',
+      data: {},
+    });
+  }
+};
+
+const searchUserByName = async (req, res) => {
+  try {
+    const { name } = req.query;
+    const users = await User.find({ fullname: { $regex: name, $options: 'i' } });
+    res.status(httpStatus.OK).json({
+      statusCode: httpStatus.OK,
+      message: 'Tìm kiếm người dùng thành công.',
+      data: {
+        users,
+      },
+    });
+  } catch (err) {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Đã xảy ra lỗi.',
@@ -97,5 +168,8 @@ const updateUser = async (req, res) => {
 module.exports = {
   createUser,
   getUsers,
+  getUser,
   updateUser,
+  deleteUser,
+  searchUserByName,
 };
