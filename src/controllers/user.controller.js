@@ -1,6 +1,8 @@
+const bcrypt = require('bcrypt');
 const httpStatus = require('http-status-codes');
 
 const User = require('../models/user.model');
+const { SALT_ROUND } = require('../constants/user.constanst');
 
 const createUser = async (req, res) => {
   try {
@@ -24,7 +26,14 @@ const createUser = async (req, res) => {
       });
     }
 
-    const user = await User.create(req.body);
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUND);
+
+    const user = await User.create({
+      fullname,
+      email,
+      password: hashedPassword,
+    });
+
     res.status(httpStatus.CREATED).json({
       statusCode: httpStatus.CREATED,
       message: 'Tạo người dùng thành công.',
