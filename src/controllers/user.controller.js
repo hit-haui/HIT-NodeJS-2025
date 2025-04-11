@@ -18,6 +18,7 @@ const createUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
+  console.log('da goi get');
   try {
     const user = await User.find();
     res.status(httpStatus.OK).json({
