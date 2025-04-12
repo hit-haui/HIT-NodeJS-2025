@@ -6,6 +6,7 @@ const httpStatus = require('http-status-codes');
 const connectDB = require('./config/db');
 const homeRoutes = require('./routes/home.route');
 const userRoutes = require('./routes/user.route');
+const errorHandler = require('./middlewares/error.middleware');
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use('*', (req, res) => {
     data: {},
   });
 });
+
+app.use(errorHandler);
 
 connectDB()
   .then(() => {
