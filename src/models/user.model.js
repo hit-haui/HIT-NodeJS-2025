@@ -1,4 +1,7 @@
+const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+
+const { SALT_ROUND } = require('../constants/user.constant');
 
 const userSchema = new mongoose.Schema({
   fullname: {
@@ -19,6 +22,20 @@ const userSchema = new mongoose.Schema({
     required: false,
     default: '',
   },
+});
+
+userSchema.pre('save', function (next) {
+  const user = this;
+
+  if (user.isModified('password')) {
+    bcrypt.hash(user.password, SALT_ROUND, function (err, hashedPassword) {
+      if (err) return next(err);
+      user.password = hashedPassword;
+      next();
+    });
+  } else {
+    next();
+  }
 });
 
 const User = mongoose.model('User', userSchema);
