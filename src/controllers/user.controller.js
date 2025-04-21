@@ -2,9 +2,9 @@ const httpStatus = require('http-status-codes');
 
 const User = require('../models/user.model');
 const ApiError = require('../utils/ApiError');
-const catchAsync = require('../utils/catchAsync');
 
-const createUser = catchAsync(async (req, res) => {
+
+const createUser = async (req, res) => {
   const { email } = req.body;
   const isExist = await User.findOne({ email });
 
@@ -14,19 +14,16 @@ const createUser = catchAsync(async (req, res) => {
 
   const user = await User.create(req.body);
 
-  const userData = user.toObject();
-  delete userData.password;
-
   res.status(httpStatus.CREATED).json({
     statusCode: httpStatus.CREATED,
     message: 'Tạo người dùng thành công.',
     data: {
-      user: userData,
+      user: user,
     },
   });
-});
+};
 
-const getUsers = catchAsync(async (req, res) => {
+const getUsers = async (req, res) => {
   const users = await User.find();
   res.status(httpStatus.OK).json({
     statusCode: httpStatus.OK,
@@ -35,10 +32,11 @@ const getUsers = catchAsync(async (req, res) => {
       users,
     },
   });
-});
+};
 
-const getUser = catchAsync(async (req, res) => {
+const getUser = async (req, res) => {
   const user = await User.findById(req.params.id);
+
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Người dùng không tồn tại');
   }
@@ -50,10 +48,11 @@ const getUser = catchAsync(async (req, res) => {
       user,
     },
   });
-});
+};
 
-const updateUser = catchAsync(async (req, res) => {
+const updateUser = async (req, res) => {
   const user = await User.findById(req.params.id);
+
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Người dùng không tồn tại');
   }
@@ -71,19 +70,16 @@ const updateUser = catchAsync(async (req, res) => {
 
   await user.save();
 
-  const userData = user.toObject();
-  delete userData.password;
-
   res.status(httpStatus.OK).json({
     statusCode: httpStatus.OK,
     message: 'Cập nhật người dùng thành công.',
     data: {
-      user: userData,
+      user: user,
     },
   });
-});
+};
 
-const deleteUser = catchAsync(async (req, res) => {
+const deleteUser = async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Người dùng không tồn tại');
@@ -96,11 +92,16 @@ const deleteUser = catchAsync(async (req, res) => {
     message: 'Xóa người dùng thành công.',
     data: {},
   });
-});
+};
 
-const searchUserByName = catchAsync(async (req, res) => {
+const searchUserByName = async (req, res) => {
   const { name } = req.query;
   const users = await User.find({ fullname: { $regex: name, $options: 'i' } });
+
+  if (users.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Người dùng không tồn tại')
+  }
+
   res.status(httpStatus.OK).json({
     statusCode: httpStatus.OK,
     message: 'Tìm kiếm người dùng thành công.',
@@ -108,7 +109,7 @@ const searchUserByName = catchAsync(async (req, res) => {
       users,
     },
   });
-});
+};
 
 module.exports = {
   createUser,

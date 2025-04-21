@@ -1,20 +1,21 @@
 const express = require('express');
 const router = express.Router();
 
+const catchAsync = require('../utils/catchAsync');
 const validate = require('../middlewares/validate.middleware');
 const userController = require('../controllers/user.controller');
 const userValidation = require('../validations/user.validation');
 
-router.post('/', validate(userValidation.createUser), userController.createUser);
+router.post('/', validate(userValidation.createUser),  catchAsync(userController.createUser));
 
-router.get('/', userController.getUsers);
+router.get('/', catchAsync(userController.getUsers));
 
-router.get('/search', userController.searchUserByName);
+router.get('/search',validate(userValidation.searchUserByName), catchAsync(userController.searchUserByName));
 
-router.get('/:id', validate(userValidation.getUser), userController.getUser);
+router.get('/:id', validate(userValidation.getUser), catchAsync(userController.getUser));
 
-router.put('/:id', userController.updateUser);
+router.put('/:id', validate(userValidation.updateUser), catchAsync(userController.updateUser));
 
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', validate(userValidation.deleteUser), catchAsync(userController.deleteUser));
 
 module.exports = router;

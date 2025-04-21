@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
 const { SALT_ROUND } = require('../constants/user.constant');
+const mongooseHidden = require('mongoose-hidden')();
 
 const userSchema = new mongoose.Schema({
   fullname: {
@@ -16,6 +17,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     select: false,
+    hide: true,
   },
   avatar: {
     type: String,
@@ -23,6 +25,8 @@ const userSchema = new mongoose.Schema({
     default: '',
   },
 });
+
+userSchema.plugin(mongooseHidden)
 
 userSchema.pre('save', function (next) {
   const user = this;
@@ -38,6 +42,6 @@ userSchema.pre('save', function (next) {
   }
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema, 'users');
 
 module.exports = User;
