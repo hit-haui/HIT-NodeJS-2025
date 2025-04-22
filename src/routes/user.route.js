@@ -13,8 +13,10 @@ router.get('/search', userController.searchUserByName);
 
 router.get('/:id', validate(userValidation.getUser), userController.getUser);
 
-router.put('/:id', userController.updateUser);
+router.put('/:id', validate(userValidation.updateUser), userController.updateUser);
 
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', validate(userValidation.deleteUser), userController.deleteUser);
+
+router.get('/search', validate(userValidation.searchUserByName), userController.searchUserByName);
 
 module.exports = router;
