@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
 const { SALT_ROUND } = require('../constants/user.constant');
+const { string, required } = require('joi');
 
 const userSchema = new mongoose.Schema({
   fullname: {

@@ -5,11 +5,9 @@ const validate = require('../middlewares/validate.middleware');
 const userController = require('../controllers/user.controller');
 const userValidation = require('../validations/user.validation');
 
-router.post('/', validate(userValidation.createUser), userController.createUser);
-
 router.get('/', userController.getUsers);
 
-router.get('/search', userController.searchUserByName);
+router.post('/', validate(userValidation.createUser), userController.createUser);
 
 router.get('/:id', validate(userValidation.getUser), userController.getUser);
 
