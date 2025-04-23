@@ -1,9 +1,8 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
 
-
 const createPost = {
-  body:Joi.object({
+  body: Joi.object({
     title: Joi.string().min(10).required().messages({
       'string.base': 'Tiêu đề phải là chuỗi',
       'string.min': 'Tiêu đề phải có ít nhất 10 ký tự',
@@ -19,7 +18,6 @@ const createPost = {
     }),
   }),
 };
-
 
 const updatePost = {
   body: Joi.object({
@@ -37,11 +35,14 @@ const updatePost = {
     .messages({
       'object.min': 'Yêu cầu cập nhật ít nhất một trường: title, content, tags',
     }),
-}
+};
 
 const postId = {
-  body:Joi.object({
-    id: Joi.string().custom(objectId).required(),
+  params: Joi.object({
+    id: Joi.string().custom(objectId).required().messages({
+      'any.required': 'id là bắt buộc',
+      'string.base': 'id phải là chuỗi',
+    }),
   }),
 };
 

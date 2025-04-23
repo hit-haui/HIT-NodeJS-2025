@@ -4,44 +4,47 @@ const catchAsync = require('../utils/catchAsync');
 const ApiError = require('../utils/ApiError');
 
 const createPost = catchAsync(async (req, res) => {
-    const post = await Post.create(req.body);
-    res.status(httpStatus.CREATED).json({
-      statusCode:httpStatus.CREATED,
-      message:'Tạo bài viết thành công',
-      data:{
-        post:post,
-      }
-    })
+  const post = await Post.create(req.body);
+  res.status(httpStatus.CREATED).json({
+    statusCode: httpStatus.CREATED,
+    message: 'Tạo bài viết thành công',
+    data: {
+      post: post,
+    },
+  });
 });
 
-const getPost = catchAsync(async (req,res) =>{
-    const post = await Post.find();
-    res.status(httpStatus.OK).json({
-      statusCode: httpStatus.OK,
-      message: 'hiển thị danh sách bài viết thành công',
-      data: {
-        post: post,
-      },
-    });
+const getPost = catchAsync(async (req, res) => {
+  const post = await Post.find();
+  if (!post) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'danh sách trống!');
+  }
+  res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
+    message: 'hiển thị danh sách bài viết thành công',
+    data: {
+      post: post,
+    },
+  });
 });
 
-const getPostById = catchAsync(async (req,res) =>{
-  const {id} = req.params;
-  const post = await Post.findById({_id:id});
-   res.status(httpStatus.OK).json({
-     statusCode: httpStatus.OK,
-     message: `lấy bài viết theo id ${id} thành công`,
-     data: {
-       post: post,
-     },
-   });
+const getPostById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const post = await Post.findById(id);
+  res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
+    message: `lấy bài viết theo id ${id} thành công`,
+    data: {
+      post: post,
+    },
+  });
 });
 
 const updatePost = catchAsync(async (req, res) => {
   const { id } = req.params;
   const post = await Post.findById({ _id: id });
-   if(!post){
-    throw new ApiError(httpStatus.NOT_FOUND,"id không tồn tại!");
+  if (!post) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'id không tồn tại!');
   }
   Object.assign(post, req.body);
   await post.save();
@@ -72,8 +75,6 @@ const deletePost = catchAsync(async (req, res) => {
     },
   });
 });
-
-
 
 module.exports = {
   createPost,

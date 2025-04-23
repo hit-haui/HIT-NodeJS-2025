@@ -4,15 +4,15 @@ const postSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    minlength:10,
+    minlength: 10,
   },
   content: {
     type: String,
     required: true,
-    minlength:20,
+    minlength: 20,
   },
-  tag: {
-    type:[String],
+  tags: {
+    type: [String],
     required: false,
   },
 });
