@@ -35,7 +35,55 @@ const getUser = {
   }),
 };
 
+const updateUser = {
+  params: Joi.object({
+    id: Joi.string().custom(objectId).required().messages({
+      'string.base': 'ID người dùng phải là một chuỗi',
+      'string.empty': 'ID người dùng không được để trống',
+      'any.required': 'ID người dùng là bắt buộc',
+      'string.pattern.name': 'ID người dùng không hợp lệ',
+    }),
+  }),
+  body: Joi.object({
+    fullname: Joi.string().min(3).max(30).messages({
+      'string.base': 'Tên người dùng phải là một chuỗi',
+      'string.empty': 'Tên người dùng không được để trống',
+      'string.min': 'Tên người dùng phải có ít nhất {#limit} ký tự',
+      'string.max': 'Tên người dùng không được vượt quá {#limit} ký tự',
+    }),
+    email: Joi.string().email().messages({
+      'string.base': 'Email phải là một chuỗi',
+      'string.empty': 'Email không được để trống',
+      'string.email': 'Email không hợp lệ',
+    }),
+  }),
+};
+
+const deleteUser = {
+  params: Joi.object({
+    id: Joi.string().custom(objectId).required().messages({
+      'string.base': 'ID người dùng phải là một chuỗi',
+      'string.empty': 'ID người dùng không được để trống',
+      'any.required': 'ID người dùng là bắt buộc',
+      'string.pattern.name': 'ID người dùng không hợp lệ',
+    }),
+  }),
+};
+
+const searchUserByName = {
+  query: Joi.object({
+    name: Joi.string().required().messages({
+      'string.base': 'Tên người dùng phải là một chuỗi',
+      'string.empty': 'Tên người dùng không được để trống',
+      'any.required': 'Tên người dùng là bắt buộc',
+    }),
+  }),
+};
+
 module.exports = {
   createUser,
   getUser,
+  updateUser,
+  deleteUser,
+  searchUserByName,
 };
