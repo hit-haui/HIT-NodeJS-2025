@@ -7,6 +7,7 @@ const connectDB = require('./config/db');
 const homeRoutes = require('./routes/home.route');
 const userRoutes = require('./routes/user.route');
 const errorHandler = require('./middlewares/error.middleware');
+const postRoutes = require('./routes/post.route');
 
 const app = express();
 
@@ -22,6 +23,8 @@ app.set('views', './views');
 
 app.use('/', homeRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/post', postRoutes);
+
 
 app.use('*', (req, res) => {
   res.status(httpStatus.NOT_FOUND).json({
