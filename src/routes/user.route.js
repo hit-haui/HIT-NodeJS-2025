@@ -3,12 +3,13 @@ const express = require('express');
 const validate = require('../middlewares/validate.middleware');
 const userController = require('../controllers/user.controller');
 const userValidation = require('../validations/user.validation');
+const { auth, adminRoute } = require('../middlewares/auth.middleware');
 
 const router = express.Router();
 
 router.post('/', validate(userValidation.createUser), userController.createUser);
 
-router.get('/', userController.getUsers);
+router.get('/', auth, adminRoute, userController.getUsers);
 
 router.get('/search', validate(userValidation.searchUserByName), userController.searchUserByName);
 
