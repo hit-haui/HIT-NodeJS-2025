@@ -42,7 +42,22 @@ const login = {
   }),
 };
 
+const updateProfile = {
+  body: Joi.object({
+    fullname: Joi.string().min(3).max(30).messages({
+      'string.base': 'Tên người dùng phải là một chuỗi',
+      'string.min': 'Tên người dùng phải có ít nhất {#limit} ký tự',
+      'string.max': 'Tên người dùng không được vượt quá {#limit} ký tự',
+    }),
+    email: Joi.string().email().messages({
+      'string.base': 'Email phải là một chuỗi',
+      'string.email': 'Email không hợp lệ',
+    }),
+  }),
+};
+
 module.exports = {
   register,
   login,
+  updateProfile,
 };
