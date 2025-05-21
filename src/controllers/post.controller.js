@@ -5,7 +5,12 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 
 const createPost = catchAsync(async (req, res) => {
-  const post = await Post.create(req.body);
+  const author = req.user._id;
+
+  const post = await Post.create({
+    ...req.body,
+    author,
+  });
 
   res.status(httpStatus.CREATED).json({
     statusCode: httpStatus.CREATED,

@@ -27,12 +27,23 @@ const createUser = catchAsync(async (req, res) => {
 });
 
 const getUsers = catchAsync(async (req, res) => {
-  const users = await User.find();
+  const limit = +req.query.limit || 10;
+  const page = +req.query.page || 1;
+  const skip = (page - 1) * limit;
+
+  const [users, totalUsers] = await Promise.all([
+    User.find().skip(skip).limit(limit),
+    User.countDocuments(),
+  ]);
+
   res.status(httpStatus.OK).json({
     statusCode: httpStatus.OK,
     message: 'Lấy danh sách người dùng thành công.',
     data: {
       users,
+      totalUsers,
+      totalPages: Math.ceil(totalUsers / limit),
+      currentPage: page,
     },
   });
 });
